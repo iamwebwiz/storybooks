@@ -1,0 +1,22 @@
+{
+  "name": "storybooks",
+  "version": "1.0.0",
+  "description": "An app for creating public and private stories",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/iamwebwiz/storybooks.git"
+  },
+  "keywords": [
+    "stories"
+  ],
+  "author": "Ezekiel Oladejo <iamwebwiz@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/iamwebwiz/storybooks/issues"
+  },
+  "homepage": "https://github.com/iamwebwiz/storybooks#readme"
+}
