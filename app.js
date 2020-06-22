@@ -27,6 +27,8 @@ app.engine(
 );
 app.set('view engine', '.hbs');
 
+app.use('/', require('./routes/index'));
+
 const PORT = process.env.PORT || 3000;
 
 app.listen(
