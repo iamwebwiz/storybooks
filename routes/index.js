@@ -17,6 +17,7 @@ router.get('/dashboard', ensureAuth, async (request, response) => {
     })
   } catch (error) {
     console.error(error)
+    response.render('errors/500')
   }
 })
 
