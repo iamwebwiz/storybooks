@@ -17,6 +17,21 @@ router.get('/', ensureAuth, async (request, response) => {
   }
 })
 
+router.get('/:id', ensureAuth, async (request, response) => {
+  try {
+    let story = await Story.findById(request.params.id).populate('user').lean()
+
+    if (!story) {
+      return response.render('errors/404')
+    }
+
+    response.render('stories/show', { story })
+  } catch (error) {
+    console.error(error)
+    response.render('errors/404')
+  }
+})
+
 router.get('/add', ensureAuth, (request, response) => {
   response.render('stories/add')
 })
@@ -33,39 +48,59 @@ router.post('/', ensureAuth, async (request, response) => {
 })
 
 router.get('/edit/:id', ensureAuth, async (request, response) => {
-  const story = await Story.findOne({ _id: request.params.id }).lean()
+  try {
+    const story = await Story.findOne({ _id: request.params.id }).lean()
 
-  if (!story) {
-    return response.render('errors/404')
-  }
+    if (!story) {
+      return response.render('errors/404')
+    }
 
-  if (story.user != request.user.id) {
-    response.redirect('/stories')
-  } else {
-    response.render('stories/edit', { story })
+    if (story.user != request.user.id) {
+      response.redirect('/stories')
+    } else {
+      response.render('stories/edit', { story })
+    }
+  } catch (error) {
+    console.error(error)
+    response.render('errors/500')
   }
 })
 
 router.put('/:id', ensureAuth, async (request, response) => {
-  let story = await Story.findById(request.params.id).lean()
+  try {
+    let story = await Story.findById(request.params.id).lean()
 
-  if (!story) {
-    return response.render('render/404')
+    if (!story) {
+      return response.render('render/404')
+    }
+
+    if (story.user != request.user.id) {
+      response.redirect('/stories')
+    } else {
+      story = await Story.findByIdAndUpdate(
+        { _id: request.params.id },
+        request.body,
+        {
+          new: true,
+          runValidators: true,
+        }
+      )
+
+      response.redirect('/dashboard')
+    }
+  } catch (error) {
+    console.error(error)
+    response.render('errors/500')
   }
+})
 
-  if (story.user != request.user.id) {
-    response.redirect('/stories')
-  } else {
-    story = await Story.findByIdAndUpdate(
-      { _id: request.params.id },
-      request.body,
-      {
-        new: true,
-        runValidators: true,
-      }
-    )
-
+router.delete('/:id', ensureAuth, async (request, response) => {
+  try {
+    await Story.remove({ _id: request.params.id })
     response.redirect('/dashboard')
+  } catch (error) {
+    console.error(error)
+    response.render('errors/500')
   }
 })
 
