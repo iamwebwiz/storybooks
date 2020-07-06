@@ -32,4 +32,41 @@ router.post('/', ensureAuth, async (request, response) => {
   }
 })
 
+router.get('/edit/:id', ensureAuth, async (request, response) => {
+  const story = await Story.findOne({ _id: request.params.id }).lean()
+
+  if (!story) {
+    return response.render('errors/404')
+  }
+
+  if (story.user != request.user.id) {
+    response.redirect('/stories')
+  } else {
+    response.render('stories/edit', { story })
+  }
+})
+
+router.put('/:id', ensureAuth, async (request, response) => {
+  let story = await Story.findById(request.params.id).lean()
+
+  if (!story) {
+    return response.render('render/404')
+  }
+
+  if (story.user != request.user.id) {
+    response.redirect('/stories')
+  } else {
+    story = await Story.findByIdAndUpdate(
+      { _id: request.params.id },
+      request.body,
+      {
+        new: true,
+        runValidators: true,
+      }
+    )
+
+    response.redirect('/dashboard')
+  }
+})
+
 module.exports = router
