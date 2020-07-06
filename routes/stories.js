@@ -3,6 +3,10 @@ const router = express.Router()
 const { ensureAuth } = require('../middlewares/auth')
 const Story = require('../models/Story')
 
+router.get('/add', ensureAuth, (request, response) => {
+  response.render('stories/add')
+})
+
 router.get('/', ensureAuth, async (request, response) => {
   try {
     const stories = await Story.find({ status: 'public' })
@@ -30,10 +34,6 @@ router.get('/:id', ensureAuth, async (request, response) => {
     console.error(error)
     response.render('errors/404')
   }
-})
-
-router.get('/add', ensureAuth, (request, response) => {
-  response.render('stories/add')
 })
 
 router.post('/', ensureAuth, async (request, response) => {
